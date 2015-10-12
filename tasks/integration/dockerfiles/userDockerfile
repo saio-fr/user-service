@@ -1,0 +1,14 @@
+FROM node:latest
+
+RUN echo "//registry.npmjs.org/:_authToken=16b46f03-f1fb-4dce-9a98-c7e685751e67" > ~/.npmrc
+
+RUN mkdir -p /opt/service
+WORKDIR /opt/service
+ADD package.json ./
+ADD model ./model
+ADD src ./src
+RUN mkdir config
+ADD test/integration/config/service.config.json ./config/config.json
+
+RUN npm install
+ENTRYPOINT ["npm","start"]

@@ -1,0 +1,17 @@
+{
+  "ws": {
+    "url": "ws://localhost:8080",
+    "realm": "saio",
+    "authId": "service",
+    "password": "service"
+  },
+
+  "db": {
+    "dialect": "mysql",
+    "user": "root",
+    "password": "",
+    "host": "localhost",
+    "port": "3306",
+    "dbname": "user"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "name": "@saio/user-service",
+  "version": "0.1.0",
+  "description": "user management",
+  "main": "src/main.js",
+  "dependencies": {
+    "@saio/service-runner": "*",
+    "@saio/db-component": "*",
+    "@saio/wsocket-component": "*",
+    "underscore": "*",
+    "when": "*",
+    "moment": "*"
+  },
+  "devDependencies": {
+    "eslint": "~1.3",
+    "jscs": "*",
+    "blue-tape": "*",
+    "rewire": "*"
+  },
+  "scripts": {
+    "start": "service-runner src/main.js",
+    "pretest": "eslint . && jscs .",
+    "test": "blue-tape test/*.test.js",
+    "test.integration": "bash tasks/test.integration.sh",
+    "test.integration.clean": "bash tasks/test.integration.clean.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:saio-fr/user-service.git"
+  },
+  "author": "saio",
+  "bugs": {
+    "url": "https://github.com/saio-fr/user-service/issues"
+  },
+  "homepage": "https://github.com/saio-fr/user-service"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "@saio/service-integration-test",
+  "version": "0.1.0",
+  "description": "service integration test",
+  "dependencies": {
+    "underscore": "*",
+    "when": "*",
+    "blue-tape": "*",
+    "@saio/service-runner": "*",
+    "@saio/db-component": "*",
+    "@saio/wsocket-component": "*"
+  },
+  "scripts": {
+    "test": "blue-tape ./test.js"
+  }
+}
