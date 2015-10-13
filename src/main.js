@@ -1,5 +1,6 @@
 var _ = require('underscore');
 var moment = require('moment');
+var crypto = require('crypto');
 var Wsocket = require('@saio/wsocket-component');
 var Db = require('@saio/db-component');
 var Config = require('./config.js');
@@ -27,6 +28,8 @@ UserService.prototype.start = function() {
       { match: 'wildcard', invoke: 'roundrobin'}),
     this.ws.register('fr.saio.api.license..user.delete.',
       this.delete.bind(this),
+    this.ws.register('fr.saio.api.internal.user.login',
+      this.login.bind(this),
       { match: 'wildcard', invoke: 'roundrobin'}),
     this.ws.subscribe('fr.saio.internal.groups',
       this.onGroupDeletion)
@@ -189,6 +192,27 @@ UserService.prototype.delete = function(args, kwargs, details) {
     }
   }).then((user) => {
     return user.destroy();
+  }).catch((err) => {
+    console.error(err.stack);
+    throw new Error('Internal server error');
+  });
+};
+
+/**
+ * details.wildcards[0]: email
+ * details.wildcards[1]: password
+ */
+UserService.prototype.login = function(args, kwargs, details) {
+
+  var hash = crypto.createHash('sha1')
+    .update(details.wildcards[1])
+    .digest('hex');
+
+  return this.db.model.User.findOne({
+    where: {
+      email: details.wildcards[0],
+      hash: hash
+    }
   }).catch((err) => {
     console.error(err.stack);
     throw new Error('Internal server error');
