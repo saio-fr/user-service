@@ -30,9 +30,9 @@ UserService.prototype.start = function() {
       this.delete.bind(this),
     this.ws.register('fr.saio.api.internal.user.login',
       this.login.bind(this),
-      { match: 'wildcard', invoke: 'roundrobin'}),
-    this.ws.subscribe('fr.saio.internal.groups',
-      this.onGroupDeletion)
+      { match: 'wildcard', invoke: 'roundrobin'})),
+    this.ws.subscribe('fr.saio.internal.group',
+      this.onGroupDeletion.bind(this))
   ];
 
   Promise.all(promises).then(function() {
@@ -95,8 +95,6 @@ UserService.prototype.create = function(args, kwargs, details) {
     avatar: kwargs.user.avatar
   }).then((user) => {
 
-    return user;
-
     // var unauthorizedRole = kwargs.user.roles.map((role) => {
       // if (!this.authorizedRoles.contains(role)) {
         // return role;
@@ -116,6 +114,9 @@ UserService.prototype.create = function(args, kwargs, details) {
     // } else {
       // throw new Error('you have specified an invalid role');
     // }
+
+    return user;
+
   }).catch((err) => {
     console.log(err.message);
     throw err;
