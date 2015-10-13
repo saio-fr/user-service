@@ -96,23 +96,23 @@ UserService.prototype.create = function(args, kwargs, details) {
   }).then((user) => {
 
     // var unauthorizedRole = kwargs.user.roles.map((role) => {
-      // if (!this.authorizedRoles.contains(role)) {
-        // return role;
-      // }
+    //  if (!this.authorizedRoles.contains(role)) {
+    //    return role;
+    //  }
     // });
     //
-    //Check if user.roles don't contains any invalid roles.
+    // Check if user.roles don't contains any invalid roles.
     // if (!_.isEmpty(unauthorizedRole)) {
-      // this.ws.call('fr.saio.api.authorizer.roles.set', [], {
-        // authId: user.id,
-        // roles: kwargs.user.roles
-      // }).catch((err) => {
-        //Delete the user cause he does not have a valid role
-        // user.destroy();
-        // throw err;
-      // });
+    //  this.ws.call('fr.saio.api.authorizer.roles.set', [], {
+    //  authId: user.id,
+    //  roles: kwargs.user.roles
+    // }).catch((err) => {
+    //  Delete the user cause he does not have a valid role
+    //  user.destroy();
+    //  throw err;
+    // });
     // } else {
-      // throw new Error('you have specified an invalid role');
+    //  throw new Error('you have specified an invalid role');
     // }
 
     return user;
