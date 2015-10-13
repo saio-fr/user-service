@@ -1,9 +1,13 @@
 #!/bin/env bash
 
+# pull images
+gcloud docker pull eu.gcr.io/saio-fr/crossbar:master
+gcloud docker pull eu.gcr.io/saio-fr/authorizer:master
+gcloud docker pull eu.gcr.io/saio-fr/user:master
+
 # install
-docker build -t user-crossbar -f tasks/integration/dockerfiles/crossbarDockerfile .;
-docker build -t user-service -f tasks/integration/dockerfiles/userDockerfile .;
-docker build -t user-test -f tasks/integration/dockerfiles/testDockerfile .;
+docker build -t user-service -f Dockerfile .;
+docker build -t user-test -f tasks/integration/Dockerfile .;
 
 # start services
 echo "starting database...";
@@ -16,7 +20,7 @@ sleep 4;
 echo "starting crossbar...";
 docker run -d \
   --name user-crossbar \
-  user-crossbar;
+  eu.gcr.io/saio-fr/crossbar:master;
 sleep 4;
 
 echo "starting user service...";
