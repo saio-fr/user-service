@@ -1,17 +1,17 @@
 {
   "ws": {
-    "url": "ws://localhost:8081",
+    "url": "ws://crossbar:8081",
     "realm": "saio",
     "authId": "service",
     "password": "service"
   },
 
   "db": {
-    "dialect": "mysql",
-    "user": "root",
-    "password": "",
-    "host": "localhost",
-    "port": "3306",
-    "dbname": "user"
+    "dialect": "postgres",
+    "user": "postgres",
+    "password": "test",
+    "host": "db",
+    "port": "5432",
+    "dbname": "postgres"
   }
 }
