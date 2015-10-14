@@ -1,6 +1,6 @@
 {
   "ws": {
-    "url": "ws://crossbar:8080",
+    "url": "ws://crossbar:8081",
     "realm": "saio",
     "authId": "service",
     "password": "service"
