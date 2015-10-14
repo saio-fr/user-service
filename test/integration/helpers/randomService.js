@@ -6,7 +6,7 @@ var Wsocket = require('@saio/wsocket-component');
 
 var RandomService = function(container, options) {
   this.ws = container.use('ws', Wsocket, {
-    url: 'ws://crossbar:8080',
+    url: 'ws://crossbar:8081',
     realm: 'saio',
     authId: 'service',
     password: 'service'
