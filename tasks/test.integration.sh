@@ -23,6 +23,14 @@ docker run -d \
   eu.gcr.io/saio-fr/crossbar:master;
 sleep 4;
 
+echo "starting authorizer service...";
+docker run -d \
+  --name user-authorizer \
+  --link user-db:db \
+  --link user-crossbar:crossbar \
+  eu.gcr.io/saio-fr/authorizer:master;
+sleep 4;
+
 echo "starting user service...";
 docker run -d \
   --name user-service \

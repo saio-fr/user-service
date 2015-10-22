@@ -41,4 +41,8 @@ RandomService.prototype.deleteUser = function(license, id) {
   return this.ws.call('fr.saio.api.license.' + license + '.user.delete.' + id);
 };
 
+RandomService.prototype.loginUser = function(email, password) {
+  return this.ws.call('fr.saio.internal.user.login', [], {email: email, password: password});
+};
+
 module.exports = RandomService;

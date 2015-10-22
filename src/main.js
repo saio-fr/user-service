@@ -9,7 +9,6 @@ var UserService = function(container, options) {
   var config = Config.build(options);
   this.ws = container.use('ws', Wsocket, config.ws);
   this.db = container.use('db', Db, config.db);
-  this.authorizedRoles = ['chat', 'knowledge', 'admin'];
 };
 
 UserService.prototype.start = function() {
@@ -28,9 +27,10 @@ UserService.prototype.start = function() {
       { match: 'wildcard', invoke: 'roundrobin'}),
     this.ws.register('fr.saio.api.license..user.delete.',
       this.delete.bind(this),
-    this.ws.register('fr.saio.api.internal.user.login',
+      { match: 'wildcard', invoke: 'roundrobin'}),
+    this.ws.register('fr.saio.internal.user.login',
       this.login.bind(this),
-      { match: 'wildcard', invoke: 'roundrobin'})),
+      { match: 'wildcard', invoke: 'roundrobin'}),
     this.ws.subscribe('fr.saio.internal.group',
       this.onGroupDeletion.bind(this))
   ];
@@ -58,8 +58,8 @@ UserService.prototype.getAll = function(args, kwargs, details) {
       license: details.wildcards[0]
     }
   }).catch((err) => {
-    console.error(err.stack);
-    throw new Error('Internal server error');
+    console.error(err);
+    throw err;
   });
 };
 
@@ -75,8 +75,8 @@ UserService.prototype.get = function(args, kwargs, details) {
       id: details.wildcards[1]
     }
   }).catch((err) => {
-    console.log(err.message);
-    throw new Error('Internal server error');
+    console.log(err);
+    throw err;
   });
 };
 
@@ -92,33 +92,31 @@ UserService.prototype.create = function(args, kwargs, details) {
     password: kwargs.user.password,
     firstname: kwargs.user.firstname,
     lastname: kwargs.user.lastname,
-    avatar: kwargs.user.avatar
+    avatar: kwargs.user.avatar,
+    roles: kwargs.user.roles
   }).then((user) => {
 
-    // var unauthorizedRole = kwargs.user.roles.map((role) => {
-    //  if (!this.authorizedRoles.contains(role)) {
-    //    return role;
-    //  }
-    // });
-    //
-    // Check if user.roles don't contains any invalid roles.
-    // if (!_.isEmpty(unauthorizedRole)) {
-    //  this.ws.call('fr.saio.api.authorizer.roles.set', [], {
-    //  authId: user.id,
-    //  roles: kwargs.user.roles
-    // }).catch((err) => {
-    //  Delete the user cause he does not have a valid role
-    //  user.destroy();
-    //  throw err;
-    // });
-    // } else {
-    //  throw new Error('you have specified an invalid role');
-    // }
+    var roles = kwargs.user.roles.map((role) => {
+      return {
+        name: role,
+        params: {
+          authId: user.id,
+          license: user.license
+        }
+      };
+    });
 
-    return user;
+    return this.ws.call('fr.saio.service.authorizer.roles.set', [], {
+      authId: user.id,
+      roles: roles
+    }).then((res) => {
+      return user;
+    }).catch((err) => {
+      throw err;
+    });
 
   }).catch((err) => {
-    console.log(err.message);
+    console.log(err);
     throw err;
   });
 };
@@ -142,6 +140,7 @@ UserService.prototype.update = function(args, kwargs, details) {
       user.firstname = kwargs.user.firstname;
       user.lastname = kwargs.user.lastname;
       user.avatar = kwargs.user.avatar;
+      user.roles = kwargs.user.roles;
 
       // Don't reset password if no one is provided
       if (kwargs.user.password) {
@@ -150,32 +149,34 @@ UserService.prototype.update = function(args, kwargs, details) {
 
       return user.save().then((user) => {
 
-      //   var unauthorizedRole = kwargs.user.roles.map((role) => {
-      //     if (!this.authorizedRoles.contains(role)) {
-      //       return role;
-      //     }
-      //   });
-      //
-      //   // Check if user.roles don't contains any invalid roles.
-      //   if (!_.isEmpty(unauthorizedRole)) {
-      //     this.ws.call('fr.saio.api.authorizer.roles.set', [], {
-      //       authId: user.id,
-      //       roles: kwargs.user.roles
-      //     }).catch((err) => {
-      //       throw err;
-      //     });
-      //   } else {
-      //     throw new Error('you have specified an invalid role');
-      //   }
+        var roles = kwargs.user.roles.map((role) => {
+          return {
+            name: role,
+            params: {
+              authId: user.id,
+              license: user.license
+            }
+          };
+        });
+
+        return this.ws.call('fr.saio.service.authorizer.roles.set', [], {
+          authId: user.id,
+          roles: roles
+        }).then((res) => {
+          return user;
+        }).catch((err) => {
+          throw err;
+        });
+
       }).catch((err) => {
-        console.log(err.stack);
+        console.log(err);
         throw err;
       });
     } else {
       throw new Error('User not found. Check the id provided.');
     }
   }).catch((err) => {
-    console.error(err.stack);
+    console.error(err);
     throw err;
   });
 };
@@ -192,30 +193,54 @@ UserService.prototype.delete = function(args, kwargs, details) {
       id: details.wildcards[1]
     }
   }).then((user) => {
-    return user.destroy();
+    if (user) {
+      return user.destroy().then(() => {
+
+        // delete the user in roles table
+        return this.ws.call('fr.saio.service.authorizer.roles.remove', [], {
+          authId: user.id
+        }).catch((err) => {
+          throw err;
+        });
+
+      }).catch((err) => {
+        throw err;
+      });
+
+    } else {
+      throw new Error('User not found. Check the id provided.');
+    }
   }).catch((err) => {
-    console.error(err.stack);
-    throw new Error('Internal server error');
+    console.error(err);
+    throw err;
   });
 };
 
 /**
- * details.wildcards[0]: email
- * details.wildcards[1]: password
+ * kwargs.email: string
+ * kwargs.password: string
  */
 UserService.prototype.login = function(args, kwargs, details) {
 
+  if (!(kwargs.email || kwargs.email instanceof String)) {
+    throw new Error('invalid email');
+  }
+
+  if (!(kwargs.password || kwargs.password instanceof String)) {
+    throw new Error('invalid password');
+  }
+
   var hash = crypto.createHash('sha1')
-    .update(details.wildcards[1])
+    .update(kwargs.password)
     .digest('hex');
 
   return this.db.model.User.findOne({
     where: {
-      email: details.wildcards[0],
+      email: kwargs.email,
       hash: hash
     }
   }).catch((err) => {
-    console.error(err.stack);
+    console.error(err);
     throw new Error('Internal server error');
   });
 };

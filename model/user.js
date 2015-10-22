@@ -1,4 +1,5 @@
 var crypto = require('crypto');
+var _ = require('underscore');
 
 module.exports = function(sequelize, DataTypes) {
   var model = {
@@ -39,6 +40,32 @@ module.exports = function(sequelize, DataTypes) {
           if (val.length < 6) {
             throw new Error('Please choose a password longer than 6 characters');
           }
+        }
+      }
+    },
+    roles: {
+      type: DataTypes.VIRTUAL,
+      allowNull: false,
+      validate: {
+        isValidRoles: function(roles) {
+
+          if (roles === undefined || roles === null) {
+            throw new Error('roles cannot be empty');
+          }
+
+          if (!(roles instanceof Array)) {
+            throw new Error('roles is not an array');
+          }
+
+          if (_.isEmpty(roles)) {
+            throw new Error('roles cannot be empty');
+          }
+
+          _.each(roles, function(role) {
+            if (_.indexOf(['ChatOperator', 'KnowledgeOperator', 'Admin'], role) < 0) {
+              throw new Error(role + ' is not a valid role');
+            }
+          });
         }
       }
     },
