@@ -95,7 +95,6 @@ tape('create an invalid user with a short password', function(t) {
   });
 });
 
-
 tape('create an invalid user with an invalid role', function(t) {
 
   var user = {
@@ -125,7 +124,6 @@ tape('create an invalid user with an invalid role', function(t) {
   });
 });
 
-
 tape('create an invalid user without roles', function(t) {
 
   var user = {
@@ -153,7 +151,6 @@ tape('create an invalid user without roles', function(t) {
     });
   });
 });
-
 
 tape('create an invalid user with empty roles', function(t) {
 
