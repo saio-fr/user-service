@@ -19,7 +19,7 @@
   },
   "scripts": {
     "start": "service-runner src/main.js",
-    "pretest": "eslint . && jscs .",
+    "pretest": "eslint src && jscs src",
     "test": "blue-tape test/*.test.js",
     "test.integration": "bash tasks/test.integration.sh",
     "test.integration.clean": "bash tasks/test.integration.clean.sh"
