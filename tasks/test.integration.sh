@@ -11,7 +11,7 @@ docker build -t user-test -f tasks/integration/Dockerfile .;
 
 # start services
 echo "starting database...";
-docker run -d -p 3306:3306 -p 9000:9000 \
+docker run -d -P \
 	--name user-db \
 	memsql/quickstart;
 sleep 20;
