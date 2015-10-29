@@ -4,10 +4,10 @@ var _ = require('underscore');
 module.exports = function(sequelize, DataTypes) {
   var model = {
     id: {
-      primaryKey: true,
-      allowNull: false,
-      unique: true,
       type: DataTypes.UUID,
+      primaryKey: true,
+      unique: true,
+      allowNull: false,
       defaultValue: DataTypes.UUIDV1
     },
     license: {
@@ -15,9 +15,9 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     },
     email: {
+      // TODO: add a unique constraint
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
       validate: {
         notEmpty: true,
         isEmail: true

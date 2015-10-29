@@ -259,6 +259,35 @@ tape('create another valid user', function(t) {
   });
 });
 
+// tape('create a valid user with an already taken email', function(t) {
+//
+  // var user = {
+    // firstname: 'arthur',
+    // lastname: 'doe',
+    // email: 'albertdoe@gmail.com',
+    // password: 'arthur8',
+    // avatar: 'http://myavatar.com',
+    // roles: ['ChatOperator', 'KnowledgeOperator']
+  // };
+//
+  // var Test = function(container) {
+    // this.randomService = container.use('randomService', RandomService, {});
+  // };
+//
+  // var tester = new Tester(Test);
+  // var client = tester.service.randomService;
+  // return tester.start()
+  // .then(function() {
+    // return client.createUser(license2, user).then(function(res) {
+      // t.fail('user has been created');
+      // return tester.stop();
+    // }).catch(function(err) {
+      // t.pass(err.message);
+      // return tester.stop();
+    // });
+  // });
+// });
+
 tape('get all users by license', function(t) {
 
   var Test = function(container) {
@@ -317,7 +346,7 @@ tape('update an user', function(t) {
     firstname: 'johny',
     lastname: 'doel',
     email: 'albertdoe2@gmail.com',
-    password: 'johnjohny',
+    password: 'johnjohny2',
     avatar: 'http://myavatar.com',
     roles: ['ChatOperator', 'KnowledgeOperator', 'Admin']
   };
@@ -349,7 +378,7 @@ tape('login with a valid email/password', function(t) {
 
   var user = {
     email: 'albertdoe2@gmail.com',
-    password: 'johnjohny'
+    password: 'johnjohny2'
   };
 
   var Test = function(container) {

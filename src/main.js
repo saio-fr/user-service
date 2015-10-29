@@ -241,7 +241,7 @@ UserService.prototype.login = function(args, kwargs, details) {
     }
   }).catch((err) => {
     console.error(err);
-    throw new Error('Internal server error');
+    throw err;
   });
 };
 

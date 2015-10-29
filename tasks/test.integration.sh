@@ -11,17 +11,30 @@ docker build -t user-test -f tasks/integration/Dockerfile .;
 
 # start services
 echo "starting database...";
-docker run -d \
+docker run -d -p 3306:3306 -p 9000:9000 \
 	--name user-db \
-	-e POSTGRES_PASSWORD=test \
-	postgres;
-sleep 4;
+	memsql/quickstart;
+sleep 20;
+
+echo "creating databases...";
+# docker exec doest not work in circle ci.
+# docker exec -d customer-db memsql-shell -e \
+# "create database customer;";
+docker run --rm \
+	--name user-mysql-client \
+	--link user-db:db \
+	mysql sh -c \
+	'mysql -h "$DB_PORT_3306_TCP_ADDR" -u root \
+	--execute="create database user;
+		create database authorizer"';
+sleep 20;
+
 
 echo "starting crossbar...";
 docker run -d \
   --name user-crossbar \
   eu.gcr.io/saio-fr/crossbar:master;
-sleep 4;
+sleep 20;
 
 echo "starting authorizer service...";
 docker run -d \
@@ -29,7 +42,7 @@ docker run -d \
   --link user-db:db \
   --link user-crossbar:crossbar \
   eu.gcr.io/saio-fr/authorizer:master;
-sleep 4;
+sleep 20;
 
 echo "starting user service...";
 docker run -d \
@@ -37,7 +50,7 @@ docker run -d \
   --link user-db:db \
   --link user-crossbar:crossbar \
   user-service;
-sleep 4;
+sleep 20;
 
 echo "running test...";
 docker run \
