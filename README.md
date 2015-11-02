@@ -2,17 +2,17 @@
 
 ### Public api
 
-**call@fr.saio.api.license.<license>.user.get.<userId>**
+**call@fr.saio.api.license.[license].user.get.[userId]**
 ```
 input: null
 output: user
 ```
-**call@fr.saio.api.license.<license>.user.getAll>**
+**call@fr.saio.api.license.[license].user.getAll**
 ```
 input: null
 output: [user]
 ```
-**call@fr.saio.api.license.<license>.user.create**
+**call@fr.saio.api.license.[license].user.create**
 ```
 input: user {
   firstname: String,
@@ -24,7 +24,7 @@ input: user {
 }
 output: user
 ```
-**call@fr.saio.api.license.<license>.user.update.<userId>**
+**call@fr.saio.api.license.[license].user.update.[userId]**
 ```
 input: user {
   firstname: String,
@@ -36,7 +36,7 @@ input: user {
 }
 output: user
 ```
-**call@fr.saio.api.license.<license>.user.delete.<userId>**
+**call@fr.saio.api.license.[license].user.delete.[userId]**
 ```
 input: null
 output: null
